@@ -1,64 +1,64 @@
-// Define LED pins for segments of the 7-segment display
-const int ledPins[] = {2, 3, 4, 5, 6, 7, 8, 9}; // Pins connected to LEDs
-
-// Hall sensor pin
+// Pin assignments
 const int hallSensorPin = 12;
+const int ledPins[] = {2, 3, 4, 5, 6, 7, 8, 9}; // D2 to D9 for the LEDs
 
-bool hallSensorState = false;
-bool previousHallSensorState = false;
+// Variables for time calculations
+volatile unsigned long lastDetectionTime = 0;
+volatile unsigned long timePerRevolution = 0;
+unsigned long currentTime = 0;
 
-unsigned long previousMillis = 0;
-const long interval = 2; // Small delay between column refreshes for better visualization
-
-// The binary matrix for displaying the number '5'
-byte digit5[5] = {
-  0b1111, // Row 1: ####
-  0b1000, // Row 2: #
-  0b1111, // Row 3: ####
-  0b0001, // Row 4:    #
-  0b1111  // Row 5: ####
+// Binary matrix representation of the number 5
+// Each row represents an LED column (from D2 to D9)
+// '1' = LED on, '0' = LED off
+byte number5[8] = {
+  B11111000, // #####
+  B10000000, // #    
+  B10000000, // #    
+  B11110000, // #### 
+  B00001000, //     #
+  B00001000, //     #
+  B10001000, // #   #
+  B01110000  //  ###
 };
 
+// Interrupt service routine for Hall sensor detection
+void hallSensorISR() {
+  unsigned long detectionTime = millis(); // Get the current time
+  timePerRevolution = detectionTime - lastDetectionTime; // Calculate the time for one full revolution
+  lastDetectionTime = detectionTime; // Update the last detection time
+}
+
 void setup() {
-  // Initialize LED pins
+  // Set LED pins as OUTPUT
   for (int i = 0; i < 8; i++) {
     pinMode(ledPins[i], OUTPUT);
   }
-
-  // Initialize Hall sensor pin
+  
+  // Set up Hall sensor pin
   pinMode(hallSensorPin, INPUT);
+  
+  // Attach interrupt to Hall sensor pin
+  attachInterrupt(digitalPinToInterrupt(hallSensorPin), hallSensorISR, FALLING);
+  
+  // Initialize the last detection time
+  lastDetectionTime = millis();
 }
 
 void loop() {
-  // Read Hall sensor state
-  hallSensorState = digitalRead(hallSensorPin);
-
-  // If the sensor detects a change (magnet passing by), synchronize the display
-  if (hallSensorState && !previousHallSensorState) {
-    // Synchronize: Reset to the first column
-    displayDigit5();
-  }
-
-  // Update the previous Hall sensor state
-  previousHallSensorState = hallSensorState;
-}
-
-// Function to display the number '5'
-void displayDigit5() {
-  for (int col = 0; col < 5; col++) {
-    unsigned long currentMillis = millis();
+  // If the timePerRevolution is calculated (not zero), display the number
+  if (timePerRevolution > 0) {
+    // Calculate the time interval for each column (8 columns in total for the number 5)
+    unsigned long columnInterval = timePerRevolution / 8;
     
-    if (currentMillis - previousMillis >= interval) {
-      previousMillis = currentMillis;
-
-      // Set the appropriate LEDs based on the binary matrix for column 'col'
-      for (int row = 0; row < 4; row++) {
-        bool ledState = bitRead(digit5[col], row); // Get the bit for this column and row
-        digitalWrite(ledPins[row], ledState);      // Set the corresponding LED on or off
+    // Display each column in sync with the rotation
+    for (int col = 0; col < 8; col++) {
+      // Display the column based on the binary matrix for the number 5
+      for (int row = 0; row < 8; row++) {
+        digitalWrite(ledPins[row], bitRead(number5[col], row)); // Set LED state
       }
-
-      delay(5); // Short delay to let the LEDs light up before moving to the next column
+      
+      // Wait for the next column based on the rotation speed
+      delayMicroseconds(columnInterval);
     }
   }
 }
-
