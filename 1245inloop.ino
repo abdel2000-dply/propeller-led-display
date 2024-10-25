@@ -1,4 +1,6 @@
 // Representation of numbers in 5x7 grid (8 rows for extra space)
+// the row 8 is not used, but it's there for better visualization
+
 const byte numbers[10][8] = {
   {0b01110, 0b10001, 0b10001, 0b10001, 0b10001, 0b10001, 0b01110, 0b00000}, // 0
   {0b00100, 0b01100, 0b00100, 0b00100, 0b00100, 0b00100, 0b01110, 0b00000}, // 1
@@ -43,6 +45,7 @@ void displayDigitColumn(int number, int col, int speed) {
 
 // Function to display the entire time on the LED matrix (4 digits: '12:45')
 void displayTime(int speed) {
+
   // Loop through each digit in the time '12:45'
   for (int i = 0; i < 4; i++) {
     int currentDigit = timeDigits[i];
@@ -53,7 +56,7 @@ void displayTime(int speed) {
     }
 
     // Add space between digits
-    delay(speed);
+    // delay(speed);
   }
 }
 
@@ -68,7 +71,7 @@ void setup() {
 }
 
 void loop() {
-  int displaySpeed = 500;  // Speed to control how fast columns change (milliseconds)
+  int displaySpeed = 50;  // Speed to control how fast columns change (milliseconds)
 
   // Display '12:45' in a loop
   displayTime(displaySpeed);
