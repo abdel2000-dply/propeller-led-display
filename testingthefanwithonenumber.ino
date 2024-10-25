@@ -11,14 +11,14 @@ unsigned long currentTime = 0;
 // Each row represents an LED column (from D2 to D9)
 // '1' = LED on, '0' = LED off
 byte number5[8] = {
-  B11111000, // #####
-  B10000000, // #    
-  B10000000, // #    
-  B11110000, // #### 
-  B00001000, //     #
-  B00001000, //     #
-  B10001000, // #   #
-  B01110000  //  ###
+  B11111000, // Column 1: #####
+  B10000000, // Column 2: #    
+  B10000000, // Column 3: #    
+  B11110000, // Column 4: #### 
+  B00001000, // Column 5:     #
+  B00001000, // Column 6:     #
+  B10001000, // Column 7: #   #
+  B01110000  // Column 8:  ###
 };
 
 // Interrupt service routine for Hall sensor detection
