@@ -108,7 +108,7 @@ void setup() {
   digitalWrite(12, HIGH);
   
   // Uncomment the following line to set the time (only once!)
-   rtc.adjust(DateTime(2024, 11, 4, 12, 30, 0)); // Year, Month, Day, Hour, Minute, Second
+  // rtc.adjust(DateTime(2024, 11, 4, 12, 30, 0)); // Year, Month, Day, Hour, Minute, Second
 }
 
 void loop() {
