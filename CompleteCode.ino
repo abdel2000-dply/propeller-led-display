@@ -11,74 +11,74 @@ RTC_DS3231 rtc;
 // Column patterns for all numbers (0-9)
 const byte numbers[10][5] = {
   { // 0
-    0b01111100,
-    0b10000010,
-    0b10000010,
-    0b10000010,
-    0b01111100
+    0b01111101,
+    0b10000011,
+    0b10000011,
+    0b10000011,
+    0b01111101
   },
   { // 1
-    0b00000000,
-    0b10000100,
-    0b11111110,
-    0b10000000,
-    0b00000000
+    0b00000001,
+    0b10000101,
+    0b11111111,
+    0b10000001,
+    0b00000001
   },
   { // 2
-    0b11000100,
-    0b10100010,
-    0b10010010,
-    0b10001010,
-    0b10000100
+    0b11000101,
+    0b10100011,
+    0b10010011,
+    0b10001011,
+    0b10000101
   },
   { // 3
-    0b01000100,
-    0b10000010,
-    0b10010010,
-    0b10010010,
-    0b01101100
+    0b01000101,
+    0b10000011,
+    0b10010011,
+    0b10010011,
+    0b01101101
   },
   { // 4
-    0b00011000,
-    0b00010100,
-    0b00010010,
-    0b11111110,
-    0b00010000
+    0b00011001,
+    0b00010101,
+    0b00010011,
+    0b11111111,
+    0b00010001
   },
   { // 5
-    0b10110110,
-    0b10010010,
-    0b10010010,
-    0b10010010,
-    0b01100010
+    0b10011111,
+    0b10010011,
+    0b10010011,
+    0b10010011,
+    0b01100011
   },
   { // 6
-    0b01111100,
-    0b10010010,
-    0b10010010,
-    0b10010010,
-    0b01100100
+    0b01111101,
+    0b10010011,
+    0b10010011,
+    0b10010011,
+    0b01100101
   },
   { // 7
-    0b00000110,
-    0b00000010,
-    0b11111010,
-    0b00001010,
-    0b00000110
+    0b00000111,
+    0b00000011,
+    0b11111011,
+    0b00001011,
+    0b00000111
   },
   { // 8
-    0b01101100,
-    0b10010010,
-    0b10010010,
-    0b10010010,
-    0b01101100
+    0b01101101,
+    0b10010011,
+    0b10010011,
+    0b10010011,
+    0b01101101
   },
   { // 9
-    0b01001100,
-    0b10010010,
-    0b10010010,
-    0b10010010,
-    0b01111100
+    0b01001101,
+    0b10010011,
+    0b10010011,
+    0b10010011,
+    0b01111101
   }
 };
 
@@ -102,6 +102,8 @@ void setup() {
   for (int i = 2; i <= 9; i++) pinMode(i, OUTPUT);
   pinMode(12, INPUT);
   
+  pinMode(13,OUTPUT);
+  
   // Enable internal pull-up resistor on D12
   digitalWrite(12, HIGH);
   
@@ -112,7 +114,9 @@ void setup() {
 void loop() {
   // Get current time from RTC
   DateTime now = rtc.now();
-  
+  digitalWrite(2, HIGH);
+  digitalWrite(13, HIGH);
+
   // Check Hall sensor
   if (digitalRead(12) == LOW) {
     displayTime(now.hour(), now.minute());
@@ -169,10 +173,10 @@ void addSpace() {
 
 void displayColon() {
   // Display two dots for the colon (:)
-  byte colonPattern = 0b00100100;  // Changed pattern: two separated dots
+  byte colonPattern = 0b00100101;  // Changed pattern: two separated dots
   clearLEDs();
   sendToPins(colonPattern);
-  delay(COLUMN_DELAY * 2);
+  delay(COLUMN_DELAY * 2);  
 }
 
 void sendToPins(byte colData) {
@@ -181,7 +185,7 @@ void sendToPins(byte colData) {
 }
 
 void clearLEDs() {
-  PORTD &= 0b00000011;  // D2-D7 off
+  PORTD &= 0b00000111;  // D2-D7 off
   PORTB &= 0b11111100;  // D8 and D9 off
 }
 
