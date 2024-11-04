@@ -180,7 +180,7 @@ void displayColon() {
 }
 
 void sendToPins(byte colData) {
-  PORTD = (PORTD & 0b00000011) | ((colData << 2) & 0b11111100); // Send bits to D2-D7
+  PORTD = (PORTD & 0b00000111) | ((colData << 2) & 0b11111100); // Send bits to D2-D7
   PORTB = (PORTB & 0b11111100) | (colData >> 6);                // Send bits to D8-D9
 }
 
